@@ -1,27 +1,33 @@
 name: Deploy to Elastic Beanstalk (Docker)
 
+# Trigger the workflow on every push to the 'main' branch
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # Use the latest Ubuntu runner
 
     steps:
+      # Step 1: Pull your latest code from GitHub
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # Step 2: Set up Python (required for EB CLI)
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
 
+      # Step 3: Install the Elastic Beanstalk CLI (EB CLI)
       - name: Install EB CLI
         run: |
+          pip install --upgrade pip
           pip install awsebcli
 
+      # Step 4: Configure AWS credentials from GitHub Secrets
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
@@ -29,6 +35,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
+      # Step 5: Initialize, select environment, and deploy
       - name: Deploy to Elastic Beanstalk
         run: |
           eb init ${{ secrets.APP_NAME }} --platform "Docker" --region ${{ secrets.AWS_REGION }}
