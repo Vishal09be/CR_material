@@ -48,7 +48,7 @@ def fetch_articles(query):
         print(f"Error fetching articles: {e}")
     return []
 
-def fetch_recommendations(topic="Machine Learning"):
+def fetch_recommendations(topic):
     try:
         response = requests.post(RECOMMEND_API, json={"topic": topic}, headers={"accept": "application/json"})
         if response.status_code == 200:
@@ -67,19 +67,40 @@ def index():
         flash("Please log in to access the dashboard.", "error")
         return redirect(url_for('login'))
 
-    course_query = request.form.get('course_search', '').strip()
-    article_query = request.form.get('article_search', '').strip()
-    rec_topic = request.form.get('rec_topic', 'Machine Learning').strip()
+    # Initialize default values
+    course_query = ''
+    article_query = ''
+    rec_topic = ''
+    courses = []
+    articles = []
+    books = []
+    papers = []
 
-    courses = fetch_courses(course_query) if course_query else []
-    articles = fetch_articles(article_query) if article_query else []
-    recommendations = fetch_recommendations(rec_topic)
+    if request.method == 'POST':
+        form_type = request.form.get('form_type', '')
+
+        if form_type == 'course':
+            course_query = request.form.get('course_search', '').strip()
+            if course_query:
+                courses = fetch_courses(course_query)
+
+        elif form_type == 'article':
+            article_query = request.form.get('article_search', '').strip()
+            if article_query:
+                articles = fetch_articles(article_query)
+
+        elif form_type == 'recommend':
+            rec_topic = request.form.get('rec_topic', '').strip()
+            if rec_topic:
+                recommendations = fetch_recommendations(rec_topic)
+                books = recommendations.get('books', [])
+                papers = recommendations.get('papers', [])
 
     return render_template('index.html',
                            courses=courses,
                            articles=articles,
-                           books=recommendations.get('books', []),
-                           papers=recommendations.get('papers', []),
+                           books=books,
+                           papers=papers,
                            course_query=course_query,
                            article_query=article_query,
                            rec_topic=rec_topic,
@@ -146,10 +167,8 @@ def login():
 @app.route('/logout')
 def logout():
     session.clear()
-    flash("You have been logged out. Please login to continue.", "success")
-    return redirect(url_for('login'))
+    return render_template('logout.html')
 
-# Optional debug endpoint to test DynamoDB live
 @app.route('/dynamodb-test')
 def dynamodb_test():
     try:
