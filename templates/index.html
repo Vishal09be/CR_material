@@ -2,13 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>ML Resource Search</title>
+  <title>SkillSphere</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body class="auth-page">
   <div class="auth-container wide">
-    <h1>🔎 Unified ML Resource Search</h1>
+    <h1>🌐 SkillSphere</h1>
+    <p style="text-align:center; font-style: italic; margin-top: -10px;">
+      Courses, articles, and books in one intelligent hub.
+    </p>
 
     <!-- Flash Messages -->
     {% with messages = get_flashed_messages(with_categories=true) %}
@@ -30,7 +33,7 @@
     <div class="card-grid">
       <!-- Course Search Card -->
       <div class="card">
-        <h2> Search Courses</h2>
+        <h2>🎓 Search Courses</h2>
         <form method="POST">
           <input type="text" name="course_search" placeholder="e.g. Python, AI" value="{{ course_query }}">
           <button type="submit">Search</button>
@@ -48,7 +51,7 @@
 
       <!-- Book/Paper Recommendation Card -->
       <div class="card">
-        <h2>📘 Book & Paper Recommendations</h2>
+        <h2>📘 Smart Recommendations</h2>
         <form method="POST">
           <input type="text" name="rec_topic" placeholder="e.g. Deep Learning" value="{{ rec_topic }}">
           <button type="submit">Search</button>
