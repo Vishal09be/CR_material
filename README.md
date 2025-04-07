@@ -1,6 +1,6 @@
-# CR_material
 
-# course-recommender
+
+# SkillSphere: course-recommender
 API Project
 
 **=====================================================================**
